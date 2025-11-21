@@ -19,7 +19,7 @@ package com.example.android.architecture.blueprints.todoapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme // Added MaterialTheme import
+import androidx.compose.material.MaterialTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -31,7 +31,7 @@ class TodoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme { // Changed to MaterialTheme
+            MaterialTheme {
                 TodoNavGraph()
             }
         }
