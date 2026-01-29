@@ -8,7 +8,7 @@ platform :android do
     )
 
     firebase_app_distribution(
-      app: "1:929258550892:android:a06f311b677162b8598a49",
+      app: "1:929258550892:android:8217ac33e6787ab5598a49",
       testers: "markamir00@gmail.com",
       release_notes: "Automated CI build via GitHub Actions"
     )
