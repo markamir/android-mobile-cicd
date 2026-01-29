@@ -1,0 +1,16 @@
+default_platform(:android)
+
+platform :android do
+  desc "Distribute APK via Firebase App Distribution"
+  lane :firebase do
+    gradle(
+      task: "assembleDebug"
+    )
+
+    firebase_app_distribution(
+      app: "1:929258550892:android:a06f311b677162b8598a49",
+      testers: "markamir00@gmail.com",
+      release_notes: "Automated CI build via GitHub Actions"
+    )
+  end
+end
