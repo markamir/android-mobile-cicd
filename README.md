@@ -6,3 +6,4 @@ This repository is used to demonstrate a mobile CI/CD pipeline:
 - Artifact-based delivery
 test delivery
 test after fix the fb secret
+PR simulation – demo change
