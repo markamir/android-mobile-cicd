@@ -7,3 +7,4 @@ This repository is used to demonstrate a mobile CI/CD pipeline:
 test delivery
 test after fix the fb secret
 PR simulation – demo change
+ test sonar
