@@ -4,9 +4,11 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  build:
+  ci:
+    name: CI - Build
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +27,7 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      # Run tests ONLY on Pull Requests
+      # Tests ONLY on PRs
       - name: Run unit tests (PR only)
         if: github.event_name == 'pull_request'
         run: ./gradlew test
@@ -33,19 +35,39 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      # CD steps ONLY on main
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+  cd:
+    name: CD - Distribute
+    needs: ci
+    runs-on: ubuntu-latest
+
+    # Run CD only on main or manual trigger
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/
+
       - name: Set up Ruby
-        if: github.ref == 'refs/heads/main'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
 
       - name: Install Bundler dependencies
-        if: github.ref == 'refs/heads/main'
         run: bundle install
 
       - name: Distribute APK to Firebase App Distribution
-        if: github.ref == 'refs/heads/main'
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: bundle exec fastlane android firebase
