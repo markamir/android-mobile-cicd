@@ -1,15 +1,23 @@
-name: Android CI/CD
+name: Android CI/CD (Manual Control)
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
   workflow_dispatch:
+    inputs:
+      run_ci:
+        description: "Run CI (build / tests)?"
+        required: true
+        default: "true"
+      run_cd:
+        description: "Run CD (distribute to Firebase)?"
+        required: true
+        default: "false"
 
 jobs:
   ci:
     name: CI - Build
     runs-on: ubuntu-latest
+
+    if: github.event.inputs.run_ci == 'true'
 
     steps:
       - name: Checkout code
@@ -27,9 +35,7 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      # Tests ONLY on PRs
-      - name: Run unit tests (PR only)
-        if: github.event_name == 'pull_request'
+      - name: Run unit tests
         run: ./gradlew test
 
       - name: Build Debug APK
@@ -43,11 +49,10 @@ jobs:
 
   cd:
     name: CD - Distribute
-    needs: ci
     runs-on: ubuntu-latest
+    needs: ci
 
-    # Run CD only on main or manual trigger
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: github.event.inputs.run_cd == 'true'
 
     steps:
       - name: Checkout code
